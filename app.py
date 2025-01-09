@@ -24,7 +24,6 @@ st.title("Excel Data Cleansing Automation")
 uploaded_file = st.file_uploader("Upload your Excel file", type=["xlsx"])
 
 if uploaded_file:
-    # Load data
     try:
         # Load the entire file
         original_df = pd.read_excel(uploaded_file)
@@ -33,37 +32,32 @@ if uploaded_file:
         # Initialize session state for the original and cleaned data
         if "cleaned_df" not in st.session_state:
             st.session_state.cleaned_df = original_df.copy()
+        if "conditions" not in st.session_state:
+            st.session_state.conditions = []
 
         # Display original data for reference
         st.subheader("Original Data Preview")
         st.dataframe(original_df)
 
-        # Dictionary to store conditions for cleansing
-        column_contains_pairs = {}
+        # Dynamic conditions input
+        st.subheader("Cleansing Conditions")
+        for i, condition in enumerate(st.session_state.conditions):
+            col1, col2 = st.columns(2)
+            with col1:
+                selected_column = st.selectbox(f"Select column for Condition {i+1}", original_df.columns, key=f"col_{i}", index=original_df.columns.get_loc(condition["column"]) if condition["column"] in original_df.columns else 0)
+            with col2:
+                text_to_remove = st.text_input(f"Text to remove for Condition {i+1}", condition["text"], key=f"text_{i}")
 
-        # Condition 1
-        st.markdown("### Condition 1: Remove values from column")
-        column_1 = st.selectbox("Select column for Condition 1", original_df.columns, key="cond1_col")
-        value_1 = st.text_input(f"Enter text to remove from '{column_1}'", key="cond1_val")
-        if column_1 and value_1:
-            column_contains_pairs[column_1] = value_1
+            # Update condition in session state
+            st.session_state.conditions[i] = {"column": selected_column, "text": text_to_remove}
 
-        # Condition 2
-        st.markdown("### Condition 2: Remove values from column")
-        column_2 = st.selectbox("Select column for Condition 2", original_df.columns, key="cond2_col")
-        value_2 = st.text_input(f"Enter text to remove from '{column_2}'", key="cond2_val")
-        if column_2 and value_2:
-            column_contains_pairs[column_2] = value_2
-
-        # Condition 3
-        st.markdown("### Condition 3: Remove values from column")
-        column_3 = st.selectbox("Select column for Condition 3", original_df.columns, key="cond3_col")
-        value_3 = st.text_input(f"Enter text to remove from '{column_3}'", key="cond3_val")
-        if column_3 and value_3:
-            column_contains_pairs[column_3] = value_3
+        # Button to add new condition
+        if st.button("Add New Condition"):
+            st.session_state.conditions.append({"column": original_df.columns[0], "text": ""})
 
         # Apply all conditions button
         if st.button("Apply All Conditions"):
+            column_contains_pairs = {condition["column"]: condition["text"] for condition in st.session_state.conditions if condition["text"]}
             st.session_state.cleaned_df = cleanse_data_by_contains(st.session_state.cleaned_df, column_contains_pairs)
             st.success("All conditions have been applied!")
 
