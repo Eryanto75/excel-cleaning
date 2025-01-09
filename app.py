@@ -34,6 +34,9 @@ if uploaded_file is not None:
         # Pembersihan lebih lanjut untuk kolom 'VEN'
         df_cleaned = df_cleaned[df_cleaned['VEN'] != 'V']
 
+        # Hapus baris di mana kolom 'QuantityonHand' == 0
+        df_cleaned = df_cleaned[df_cleaned['QuantityonHand'] != 0]
+
         st.write("Cleaned Data:")
         st.write(df_cleaned)
 
