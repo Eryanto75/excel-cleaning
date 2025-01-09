@@ -42,7 +42,8 @@ if uploaded_file is not None:
             cleaned_file = df_cleaned.to_csv(index=False).encode('utf-8')
             mime_type = 'text/csv'
         else:
-            cleaned_file = df_cleaned.to_excel(index=False, engine='xlsxwriter')
+            # Menggunakan engine default tanpa menyebutkan engine
+            cleaned_file = df_cleaned.to_excel(index=False)  # Menggunakan openpyxl secara default
             mime_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 
         st.download_button(
