@@ -30,45 +30,45 @@ if uploaded_file:
         original_df = pd.read_excel(uploaded_file)
         st.success("File uploaded successfully!")
 
-        # Initialize session state for iterative cleansing
+        # Initialize session state for the original and cleaned data
         if "cleaned_df" not in st.session_state:
             st.session_state.cleaned_df = original_df.copy()
 
-        # Iterative cleansing loop
-        iteration = 1
-        while True:
-            st.markdown(f"### Step {iteration}: Cleanse Data")
-            
-            # Select columns and specify text patterns to delete
-            columns = st.session_state.cleaned_df.columns.tolist()
-            column_contains_pairs = {}
-            selected_columns = st.multiselect(f"Step {iteration}: Select columns to clean", options=columns, key=f"select_columns_{iteration}")
-            
-            for column in selected_columns:
-                text_to_delete = st.text_input(f"Step {iteration}: Enter text to remove from '{column}' (case-insensitive)", key=f"text_to_delete_{iteration}_{column}")
-                if text_to_delete:
-                    column_contains_pairs[column] = text_to_delete
+        # Display original data for reference
+        st.subheader("Original Data Preview")
+        st.dataframe(original_df)
 
-            # Apply cleansing step
-            if st.button(f"Cleanse Data (Step {iteration})", key=f"cleanse_button_{iteration}"):
-                st.session_state.cleaned_df = cleanse_data_by_contains(st.session_state.cleaned_df, column_contains_pairs)
-                st.success(f"Data cleansed at Step {iteration}.")
-                st.experimental_rerun()
+        # Dictionary to store conditions for cleansing
+        column_contains_pairs = {}
 
-            # Option to break the loop
-            continue_cleansing = st.radio(
-                f"Do you want to apply another cleansing step? (Step {iteration})",
-                ("No", "Yes"),
-                key=f"continue_{iteration}",
-                index=0  # Default to "No"
-            )
-            if continue_cleansing == "No":
-                break
+        # Condition 1
+        st.markdown("### Condition 1: Remove values from column")
+        column_1 = st.selectbox("Select column for Condition 1", original_df.columns, key="cond1_col")
+        value_1 = st.text_input(f"Enter text to remove from '{column_1}'", key="cond1_val")
+        if column_1 and value_1:
+            column_contains_pairs[column_1] = value_1
 
-            iteration += 1
+        # Condition 2
+        st.markdown("### Condition 2: Remove values from column")
+        column_2 = st.selectbox("Select column for Condition 2", original_df.columns, key="cond2_col")
+        value_2 = st.text_input(f"Enter text to remove from '{column_2}'", key="cond2_val")
+        if column_2 and value_2:
+            column_contains_pairs[column_2] = value_2
 
-        # Display the cleaned data preview only after cleansing steps are completed
-        st.subheader("Preview of Cleaned Data")
+        # Condition 3
+        st.markdown("### Condition 3: Remove values from column")
+        column_3 = st.selectbox("Select column for Condition 3", original_df.columns, key="cond3_col")
+        value_3 = st.text_input(f"Enter text to remove from '{column_3}'", key="cond3_val")
+        if column_3 and value_3:
+            column_contains_pairs[column_3] = value_3
+
+        # Apply all conditions button
+        if st.button("Apply All Conditions"):
+            st.session_state.cleaned_df = cleanse_data_by_contains(st.session_state.cleaned_df, column_contains_pairs)
+            st.success("All conditions have been applied!")
+
+        # Display the cleaned data preview
+        st.subheader("Cleaned Data Preview")
         st.dataframe(st.session_state.cleaned_df)
 
         # Allow user to download cleaned data
