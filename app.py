@@ -60,7 +60,13 @@ if uploaded_file:
                 st.experimental_rerun()
 
             # Option to break the loop
-            if not st.radio(f"Do you want to apply another cleansing step? (Step {iteration})", ("Yes", "No"), key=f"continue_{iteration}") == "Yes":
+            continue_cleansing = st.radio(
+                f"Do you want to apply another cleansing step? (Step {iteration})",
+                ("No", "Yes"),
+                key=f"continue_{iteration}",
+                index=0  # Default to "No"
+            )
+            if continue_cleansing == "No":
                 break
 
             iteration += 1
