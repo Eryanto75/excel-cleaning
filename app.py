@@ -27,8 +27,10 @@ if uploaded_file is not None:
         # Pastikan kolom 'ItemName' bertipe string dan hilangkan nilai NaN
         df['ItemName'] = df['ItemName'].astype(str).fillna('')
 
-        # Pembersihan data
-        df_cleaned = df[~df['ItemName'].str.startswith(('in/', 'js/'))]
+        # Pembersihan data: Hapus baris yang 'ItemName' diawali dengan 'in/', 'js/', tanpa mempedulikan case (huruf kapital)
+        df_cleaned = df[~df['ItemName'].str.lower().str.startswith(('in/', 'js/'))]
+
+        # Pembersihan lebih lanjut untuk kolom 'VEN'
         df_cleaned = df_cleaned[df_cleaned['VEN'] != 'V']
 
         st.write("Cleaned Data:")
