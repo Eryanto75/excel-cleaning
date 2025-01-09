@@ -34,10 +34,6 @@ if uploaded_file:
         if "cleaned_df" not in st.session_state:
             st.session_state.cleaned_df = original_df.copy()
 
-        # Display current data
-        st.subheader("Preview of Current Data")
-        st.dataframe(st.session_state.cleaned_df)
-
         # Iterative cleansing loop
         iteration = 1
         while True:
@@ -70,6 +66,10 @@ if uploaded_file:
                 break
 
             iteration += 1
+
+        # Display the cleaned data preview only after cleansing steps are completed
+        st.subheader("Preview of Cleaned Data")
+        st.dataframe(st.session_state.cleaned_df)
 
         # Allow user to download cleaned data
         st.download_button(
