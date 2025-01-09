@@ -6,7 +6,9 @@ from io import BytesIO
 def cleanse_data_by_contains(df, column_contains_pairs):
     for column, text_to_delete in column_contains_pairs.items():
         if column in df.columns and text_to_delete:
-            df = df[~df[column].str.contains(text_to_delete, na=False, case=False)]
+            # Escape any special characters in the text_to_delete
+            text_to_delete_escaped = text_to_delete.replace('/', '\/')
+            df = df[~df[column].str.contains(text_to_delete_escaped, na=False, case=False)]
     return df
 
 # Fungsi untuk mengunduh file Excel
