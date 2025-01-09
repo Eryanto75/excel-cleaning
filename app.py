@@ -26,13 +26,13 @@ uploaded_file = st.file_uploader("Upload your Excel file", type=["xlsx"])
 if uploaded_file:
     # Load data
     try:
-        # Read only necessary rows to improve performance
-        df = pd.read_excel(uploaded_file, nrows=1000)
+        # Load the entire file
+        df = pd.read_excel(uploaded_file)
         st.success("File uploaded successfully!")
 
-        # Display data
+        # Display entire data
         st.subheader("Preview of Uploaded Data")
-        st.dataframe(df.head(20))  # Display only the first 20 rows for faster rendering
+        st.dataframe(df)  # Display all rows
 
         # Iterative cleansing loop
         continue_cleansing = "No"
@@ -51,7 +51,7 @@ if uploaded_file:
             if st.button(f"Cleanse Data (Step {iteration})", key=f"cleanse_button_{iteration}"):
                 df = cleanse_data_by_contains(df, column_contains_pairs)
                 st.subheader(f"Preview of Cleaned Data (After Step {iteration})")
-                st.dataframe(df.head(20))  # Display only the first 20 rows for faster rendering
+                st.dataframe(df)  # Display all rows
 
                 # Option to continue cleansing
                 continue_cleansing = st.radio(f"Do you want to apply another cleansing step? (Step {iteration})", ("No", "Yes"), key=f"continue_{iteration}")
