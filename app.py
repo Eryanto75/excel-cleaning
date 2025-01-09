@@ -24,6 +24,9 @@ if uploaded_file is not None:
         st.write("Original Data:")
         st.write(df)
 
+        # Pastikan kolom 'ItemName' bertipe string dan hilangkan nilai NaN
+        df['ItemName'] = df['ItemName'].astype(str).fillna('')
+
         # Pembersihan data
         df_cleaned = df[~df['ItemName'].str.startswith(('in/', 'js/'))]
         df_cleaned = df_cleaned[df_cleaned['VEN'] != 'V']
